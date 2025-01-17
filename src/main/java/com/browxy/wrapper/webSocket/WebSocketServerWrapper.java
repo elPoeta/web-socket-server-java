@@ -2,7 +2,11 @@ package com.browxy.wrapper.webSocket;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.server.WebSocketServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.browxy.wrapper.error.ErrorMessageResponse;
+import com.browxy.wrapper.response.ResponseHandler;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -12,6 +16,7 @@ import org.java_websocket.handshake.ClientHandshake;
 import java.net.InetSocketAddress;
 
 public class WebSocketServerWrapper extends WebSocketServer {
+	private static final Logger logger = LoggerFactory.getLogger(WebSocketServerWrapper.class);
 	private Gson gson;
 
 	public WebSocketServerWrapper(InetSocketAddress address) {
@@ -29,27 +34,28 @@ public class WebSocketServerWrapper extends WebSocketServer {
 
 	@Override
 	public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-		System.out.println("Closed connection: " + conn.getRemoteSocketAddress());
+		logger.error("Closed connection: ", conn.getRemoteSocketAddress());
 	}
 
 	@Override
 	public void onMessage(WebSocket conn, String message) {
-		System.out.println("Message from client: " + message);
-
-		conn.send(message);
+		logger.info(message);
+		ResponseHandler responseHandler = new ResponseHandler(message);
+		String result = responseHandler.getResponse();
+		conn.send(result);
 	}
 
 	@Override
 	public void onError(WebSocket conn, Exception ex) {
-		ex.printStackTrace();
+		logger.error("",ex);
 		String errorMessage = ex.getMessage() != null || !ex.getMessage().trim().equals("") ? ex.getMessage() : "An error has occurred in the connection";
-		JsonObject json = new JsonObject();
-		json.addProperty("error", errorMessage);
-		conn.send(this.gson.toJson(json));
+		ErrorMessageResponse errorMessageResponse = ErrorMessageResponse.getInstance();
+		errorMessageResponse.setMessage(errorMessage);
+		conn.send(this.gson.toJson(errorMessageResponse, ErrorMessageResponse.class));
 	}
 
 	@Override
 	public void onStart() {
-		System.out.println("WebSocket server started successfully");
+		logger.info("WebSocket server started successfully");
 	}
 }
