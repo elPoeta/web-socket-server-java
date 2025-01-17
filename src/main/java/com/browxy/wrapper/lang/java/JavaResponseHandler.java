@@ -61,7 +61,8 @@ public class JavaResponseHandler implements ResponseMessage {
 	}
 
 	private Class<?> getCachedOrCompileUserClass() {
-		File userCodeFile = new File(message.getUserCodePath());
+		String containerBasePath = System.getProperty("containerBasePath");
+		File userCodeFile = new File(containerBasePath + message.getUserCodePath());
 		
 		if (cachedUserClass == null || userCodeFile.lastModified() > lastModified) {
 			logger.info("User code change detected. Recompiling...");
@@ -77,7 +78,6 @@ public class JavaResponseHandler implements ResponseMessage {
 
 			URLClassLoader classLoader = null;
 			try {
-				String containerBasePath = System.getProperty("containerBasePath");
 				File targetDir = new File(containerBasePath + "/target/classes");
 			
 				classLoader = new URLClassLoader(new URL[] { targetDir.toURI().toURL() },
