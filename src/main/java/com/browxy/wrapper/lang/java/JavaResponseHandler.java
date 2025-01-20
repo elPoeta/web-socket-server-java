@@ -42,8 +42,10 @@ public class JavaResponseHandler implements ResponseMessage {
 	public String handleClientRequest() {
 		Class<?> userClass = getCachedOrCompileUserClass();
 		if (userClass == null) {
+			String containerBasePath = System.getProperty("containerBasePath");
+			File userCodeFile = new File(containerBasePath + message.getUserCodePath());
 			ErrorMessageResponse errorMessageResponse = ErrorMessageResponse.getInstance();
-			errorMessageResponse.setMessage("Failed to load user code.");
+			errorMessageResponse.setMessage("Failed to load user code. File: " + userCodeFile.getAbsolutePath());
 			return new Gson().toJson(errorMessageResponse, ErrorMessageResponse.class);
 		}
 
