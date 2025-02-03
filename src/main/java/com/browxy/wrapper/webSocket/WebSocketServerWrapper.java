@@ -1,4 +1,5 @@
 package com.browxy.wrapper.webSocket;
+
 import org.java_websocket.WebSocket;
 import org.java_websocket.server.WebSocketServer;
 import org.slf4j.Logger;
@@ -26,17 +27,18 @@ public class WebSocketServerWrapper extends WebSocketServer {
 
 	@Override
 	public void onOpen(WebSocket conn, ClientHandshake handshake) {
-		logger.info("Open connection: ",conn.getRemoteSocketAddress());
+		logger.info("Open connection: " + conn.getLocalSocketAddress());
 		JsonObject json = new JsonObject();
-		json.addProperty("remoteAddress", conn.getRemoteSocketAddress().toString());
+		json.addProperty("remoteAddress", conn.getRemoteSocketAddress().getAddress().toString());
 		json.addProperty("isOpen", conn.isOpen());
 		json.addProperty("type", "open");
 		conn.send(this.gson.toJson(json));
+
 	}
 
 	@Override
 	public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-		logger.info("Closed connection: ", conn.getRemoteSocketAddress());
+		logger.info("Closed connection: " + conn.getRemoteSocketAddress());
 	}
 
 	@Override
@@ -69,4 +71,3 @@ public class WebSocketServerWrapper extends WebSocketServer {
 		return this.gson.toJson(responseBuilder, SocketMessage.class);
 	}
 }
-
