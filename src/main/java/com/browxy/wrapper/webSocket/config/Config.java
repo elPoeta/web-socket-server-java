@@ -1,4 +1,4 @@
-package com.browxy.wrapper.webSocket;
+package com.browxy.wrapper.webSocket.config;
 
 import java.util.Map;
 import java.util.Properties;

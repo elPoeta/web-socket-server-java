@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.browxy.wrapper.message.SocketMessage;
 import com.browxy.wrapper.response.ResponseHandler;
 import com.browxy.wrapper.status.StatusMessageResponse;
+import com.browxy.wrapper.webSocket.config.Config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
