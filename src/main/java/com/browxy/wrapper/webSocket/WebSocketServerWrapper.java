@@ -1,6 +1,7 @@
 package com.browxy.wrapper.webSocket;
 
 import org.java_websocket.WebSocket;
+import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 import org.java_websocket.server.WebSocketServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,12 +17,43 @@ import org.java_websocket.handshake.ClientHandshake;
 
 import java.net.InetSocketAddress;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
+import java.io.FileInputStream;
+import java.security.KeyStore;
+
 public class WebSocketServerWrapper extends WebSocketServer {
 	private static final Logger logger = LoggerFactory.getLogger(WebSocketServerWrapper.class);
 	private Gson gson;
 
 	public WebSocketServerWrapper(InetSocketAddress address) {
 		super(address);
+
+		try {
+            Config config = Config.getInstance();
+			String keystorePath = config.getKeystorePath();
+			String keystorePassword = config.getKeystorePassword();
+
+			KeyStore keystore = KeyStore.getInstance("PKCS12");
+			keystore.load(new FileInputStream(keystorePath), keystorePassword.toCharArray());
+
+			KeyManagerFactory keyManagerFactory = KeyManagerFactory
+					.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+			keyManagerFactory.init(keystore, keystorePassword.toCharArray());
+
+			TrustManagerFactory trustManagerFactory = TrustManagerFactory
+					.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+			trustManagerFactory.init(keystore);
+
+			SSLContext sslContext = SSLContext.getInstance("TLS");
+			sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
+
+			this.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(sslContext));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		this.gson = new GsonBuilder().serializeNulls().disableHtmlEscaping().create();
 	}
 
