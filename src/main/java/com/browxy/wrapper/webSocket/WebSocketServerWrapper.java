@@ -30,9 +30,15 @@ public class WebSocketServerWrapper extends WebSocketServer {
 
 	public WebSocketServerWrapper(InetSocketAddress address) {
 		super(address);
+		Config config = Config.getInstance();
+        if(config.isSecure()) {
+        	this.HandleSecureConnections(config);
+        }
+		this.gson = new GsonBuilder().serializeNulls().disableHtmlEscaping().create();
+	}
 
+	private void HandleSecureConnections(Config config) {
 		try {
-            Config config = Config.getInstance();
 			String keystorePath = config.getKeystorePath();
 			String keystorePassword = config.getKeystorePassword();
 
@@ -54,8 +60,6 @@ public class WebSocketServerWrapper extends WebSocketServer {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		this.gson = new GsonBuilder().serializeNulls().disableHtmlEscaping().create();
 	}
 
 	@Override
