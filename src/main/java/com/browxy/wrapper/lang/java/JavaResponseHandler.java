@@ -38,7 +38,7 @@ public class JavaResponseHandler implements ResponseMessage {
 		if (userClass == null) {
 			Config config = Config.getInstance();
 			String containerBasePath = config.getContainerBasePath();
-			File userCodeFile = new File(containerBasePath + message.getUserCodePath());
+			File userCodeFile = new File(containerBasePath + File.separator + message.getUserCodePath());
 			return ResponseMessageUtil
 					.getStatusMessage("Failed to load user code. File: " + userCodeFile.getAbsolutePath());
 		}
@@ -59,7 +59,7 @@ public class JavaResponseHandler implements ResponseMessage {
 	private Class<?> getCachedOrCompileUserClass() {
 		Config config = Config.getInstance();
 		String containerBasePath = config.getContainerBasePath();
-		File userCodeFile = new File(containerBasePath + message.getUserCodePath());
+		File userCodeFile = new File(containerBasePath + File.separator + message.getUserCodePath());
 
 		if (cachedUserClass == null || userCodeFile.lastModified() > lastModified) {
 			logger.info("User code change detected. Recompiling...");

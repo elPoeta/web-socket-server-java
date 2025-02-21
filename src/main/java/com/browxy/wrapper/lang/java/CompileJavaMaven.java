@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.browxy.wrapper.fileUtils.FileManager;
 import com.browxy.wrapper.lang.CompilerCode;
 import com.browxy.wrapper.lang.CompilerResult;
 import com.browxy.wrapper.lang.CustomClassLoader;
@@ -29,6 +30,8 @@ public class CompileJavaMaven implements CompilerCode {
 			String containerBasePath = config.getContainerBasePath();
 			String customRepoPath = config.getContainerMavenRepoPath();
 			String customSettingsPath = config.getContainerMavenSettingsPath();
+           
+			//FileManager.setPermissions(containerBasePath + File.separator + "target");
 
 			ProcessBuilder builder = new ProcessBuilder("mvn", "-Dmaven.repo.local=" + customRepoPath, "-s",
 					customSettingsPath, "clean", "compile", "dependency:build-classpath",

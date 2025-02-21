@@ -10,6 +10,7 @@ import javax.tools.ToolProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.browxy.wrapper.fileUtils.FileManager;
 import com.browxy.wrapper.lang.CompilerCode;
 import com.browxy.wrapper.lang.CompilerResult;
 import com.browxy.wrapper.lang.CustomClassLoader;
@@ -33,7 +34,7 @@ public class CompileJavaStandard implements CompilerCode {
 
 		String targetDirectory = containerBasePath + File.separator + "target" + File.separator + "classes";
 		String libDirectory = containerBasePath + File.separator + "libraries";
-		String filePath = containerBasePath + "" + javaMessage.getUserCodePath();
+		String filePath = containerBasePath + File.separator + javaMessage.getUserCodePath();
 		createDirectory(targetDirectory);
 
 		List<String> dependencieJars = CustomClassLoader.getClasspathFromLibDirectory(libDirectory);
@@ -46,6 +47,7 @@ public class CompileJavaStandard implements CompilerCode {
 
 	private void createDirectory(String targetDirectory) {
 		File dir = new File(targetDirectory);
+		FileManager.setPermissions(targetDirectory);
 		if (dir.exists()) {
 			deleteDirectoryAndContents(dir);
 		}
