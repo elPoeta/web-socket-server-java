@@ -24,11 +24,8 @@ public class CustomClassLoader extends URLClassLoader {
 
 	@Override
 	protected Class<?> findClass(String name) throws ClassNotFoundException {
-		System.out.println("Loading class: " + name);
-		System.out.println("ClassLoader hierarchy:");
 		ClassLoader classLoader = this;
 		while (classLoader != null) {
-			System.out.println(classLoader);
 			classLoader = classLoader.getParent();
 		}
 		try {
